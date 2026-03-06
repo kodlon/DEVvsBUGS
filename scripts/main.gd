@@ -11,6 +11,8 @@ extends Node2D
 @onready var _go_restart: Button     = $UI/GameOverPanel/GOVBox/GORestartButton
 
 var _game_over := false
+var _wave_overlay_bg: ColorRect = null
+var _wave_label: Label = null
 
 func _ready() -> void:
 	_setup_arena()
@@ -40,11 +42,53 @@ func _ready() -> void:
 	_start_panel.visible = true
 	get_tree().paused = true
 
+	# Підключаємо хвильовий спавнер
+	$Spawner.wave_started.connect(_on_wave_started)
+	_setup_wave_overlay()
+
+func _setup_wave_overlay() -> void:
+	# Напівпрозорий фон для анонсу хвилі
+	_wave_overlay_bg = ColorRect.new()
+	_wave_overlay_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_wave_overlay_bg.color = Color(0.0, 0.0, 0.0, 0.65)
+	_wave_overlay_bg.visible = false
+	$UI.add_child(_wave_overlay_bg)
+
+	# Великий червоний текст назви хвилі
+	_wave_label = Label.new()
+	_wave_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_wave_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_wave_label.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
+	_wave_label.add_theme_font_size_override("font_size", 64)
+	_wave_label.add_theme_color_override("font_color", Color(1.0, 0.05, 0.05))
+	_wave_label.add_theme_constant_override("outline_size", 5)
+	_wave_label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
+	_wave_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_wave_label.visible = false
+	$UI.add_child(_wave_label)
+
+func _on_wave_started(wave_name: String) -> void:
+	_wave_label.text = wave_name
+	_wave_label.modulate.a = 1.0
+	_wave_overlay_bg.modulate.a = 1.0
+	_wave_label.visible = true
+	_wave_overlay_bg.visible = true
+
+	var tween := create_tween()
+	tween.tween_interval(0.7)
+	tween.tween_property(_wave_label,      "modulate:a", 0.0, 0.3)
+	tween.parallel().tween_property(_wave_overlay_bg, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(func() -> void:
+		_wave_label.visible = false
+		_wave_overlay_bg.visible = false
+	)
+
 func _on_start_pressed() -> void:
 	_start_panel.visible = false
 	get_tree().paused = false
 	_pause_button.visible = true
 	_restart_button.visible = true
+	$Spawner.start_game()
 
 func _on_pause_pressed() -> void:
 	get_tree().paused = !get_tree().paused
