@@ -22,7 +22,12 @@ var _go_score_label: Label = null
 var _wave_overlay_bg: ColorRect = null
 var _wave_label: Label = null
 
+# XP
+var _xp_bar: ProgressBar = null
+var _xp_label: Label = null
+
 func _ready() -> void:
+	PlayerStats.reset()   # скидаємо при кожному перезапуску сцени
 	add_to_group("score_tracker")
 	_setup_arena()
 
@@ -56,6 +61,7 @@ func _ready() -> void:
 
 	_setup_score_ui()
 	_setup_wave_overlay()
+	_setup_xp_ui()
 
 # ── Score UI ────────────────────────────────────────────────
 
@@ -176,3 +182,68 @@ func _on_player_died() -> void:
 	_game_over_panel.visible = true
 	_pause_button.visible = false
 	_restart_button.visible = false
+
+# ── XP бар ───────────────────────────────────────────────────
+
+func _setup_xp_ui() -> void:
+	# Золота шкала XP внизу екрану
+	_xp_bar = ProgressBar.new()
+	_xp_bar.set_anchor(SIDE_LEFT,   0.0)
+	_xp_bar.set_anchor(SIDE_RIGHT,  1.0)
+	_xp_bar.set_anchor(SIDE_TOP,    1.0)
+	_xp_bar.set_anchor(SIDE_BOTTOM, 1.0)
+	_xp_bar.offset_top    = -26.0
+	_xp_bar.offset_bottom =  0.0
+	_xp_bar.min_value     = 0.0
+	_xp_bar.max_value     = PlayerStats.MAX_XP
+	_xp_bar.value         = 0.0
+	_xp_bar.show_percentage = false
+
+	var fill_style := StyleBoxFlat.new()
+	fill_style.bg_color = Color(1.0, 0.82, 0.1)
+	_xp_bar.add_theme_stylebox_override("fill", fill_style)
+
+	var bg_style := StyleBoxFlat.new()
+	bg_style.bg_color = Color(0.12, 0.12, 0.12, 0.85)
+	_xp_bar.add_theme_stylebox_override("background", bg_style)
+
+	$UI.add_child(_xp_bar)
+
+	# Підпис поверх шкали
+	_xp_label = Label.new()
+	_xp_label.set_anchor(SIDE_LEFT,   0.0)
+	_xp_label.set_anchor(SIDE_RIGHT,  1.0)
+	_xp_label.set_anchor(SIDE_TOP,    1.0)
+	_xp_label.set_anchor(SIDE_BOTTOM, 1.0)
+	_xp_label.offset_top    = -26.0
+	_xp_label.offset_bottom =  0.0
+	_xp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_xp_label.vertical_alignment   = VERTICAL_ALIGNMENT_CENTER
+	_xp_label.add_theme_font_size_override("font_size", 13)
+	_xp_label.add_theme_color_override("font_color", Color(0.08, 0.08, 0.08))
+	_xp_label.add_theme_constant_override("outline_size", 2)
+	_xp_label.add_theme_color_override("font_outline_color", Color(1.0, 0.9, 0.4, 0.8))
+	_xp_label.text = "Рівень 0  ·  XP: 0 / 100"
+	$UI.add_child(_xp_label)
+
+	PlayerStats.xp_changed.connect(_on_xp_changed)
+	PlayerStats.level_up.connect(_on_level_up)
+
+func _on_xp_changed(current: float, maximum: float) -> void:
+	_xp_bar.value = current
+	_xp_label.text = "Рівень %d  ·  XP: %d / %d" % [
+		PlayerStats.current_level, int(current), int(maximum)
+	]
+
+func _on_level_up() -> void:
+	call_deferred("_show_level_up_ui")
+
+func _show_level_up_ui() -> void:
+	# Уникаємо появи двох вікон одночасно
+	for child in $UI.get_children():
+		if child is LevelUpUI:
+			return
+	var ui := LevelUpUI.new()
+	$UI.add_child(ui)
+	ui.setup()
+	get_tree().paused = true

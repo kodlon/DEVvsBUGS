@@ -69,7 +69,7 @@ func _process(delta: float) -> void:
 	_spawn_timer -= delta
 	if _spawn_timer <= 0.0:
 		_spawn_enemy()
-		_spawn_timer = randf_range(_spawn_delay_min, _spawn_delay_max)
+		_spawn_timer = randf_range(_spawn_delay_min, _spawn_delay_max) * PlayerStats.spawn_delay_mult
 
 func _start_wave() -> void:
 	_game_active = true
@@ -77,7 +77,7 @@ func _start_wave() -> void:
 	_wave_timer      = wave_cfg.duration
 	_spawn_delay_min = wave_cfg.spawn_delay_min
 	_spawn_delay_max = wave_cfg.spawn_delay_max
-	_spawn_timer     = randf_range(_spawn_delay_min, _spawn_delay_max)
+	_spawn_timer     = randf_range(_spawn_delay_min, _spawn_delay_max) * PlayerStats.spawn_delay_mult
 
 	if wave_cfg.duration < 0.0:
 		_escalate_timer = wave_cfg.escalate_interval

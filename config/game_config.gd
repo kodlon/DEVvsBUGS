@@ -132,5 +132,17 @@ const WAVE_CONFIG := [
 	},
 ]
 
+# ============================================================
+# ДОСВІД З ВОРОГІВ
+# Ключі: 0=NORMAL, 1=FAST, 2=TANK, 3=TURRET, 4=COFFEE
+# ============================================================
+const XP_PER_ENEMY := {
+	0: 10.0,
+	1: 5.0,
+	2: 50.0,
+	3: 20.0,
+	4: 15.0,
+}
+
 func get_arena_offset() -> Vector2:
 	return Vector2((VIEWPORT_WIDTH - ARENA_WIDTH) / 2.0, (VIEWPORT_HEIGHT - ARENA_HEIGHT) / 2.0)

@@ -71,7 +71,7 @@ func _handle_movement() -> void:
 	if Input.is_key_pressed(KEY_A): direction.x -= 1
 	if Input.is_key_pressed(KEY_D): direction.x += 1
 
-	velocity = direction.normalized() * GameConfig.PLAYER_SPEED
+	velocity = direction.normalized() * PlayerStats.move_speed
 	move_and_slide()
 	position = position.clamp(_arena_min, _arena_max)
 
@@ -89,7 +89,7 @@ func _handle_shooting(delta: float) -> void:
 	_shoot_timer -= delta
 	if _shoot_timer <= 0.0:
 		_auto_shoot()
-		_shoot_timer = GameConfig.PLAYER_SHOOT_COOLDOWN
+		_shoot_timer = PlayerStats.fire_rate_delay
 
 func _auto_shoot() -> void:
 	var enemies := get_tree().get_nodes_in_group("enemies")
@@ -98,7 +98,7 @@ func _auto_shoot() -> void:
 
 	var nearest: Node2D = null
 	var min_dist := INF
-	var radius := GameConfig.PLAYER_SHOOT_RADIUS
+	var radius := PlayerStats.attack_range
 	for enemy in enemies:
 		var dist := global_position.distance_to(enemy.global_position)
 		if radius > 0.0 and dist > radius:
@@ -119,15 +119,15 @@ func _auto_shoot() -> void:
 func take_burnout(amount: float) -> void:
 	if _is_dashing:
 		return
-	burnout = clamp(burnout + amount, 0.0, GameConfig.PLAYER_MAX_BURNOUT)
-	burnout_changed.emit(burnout, GameConfig.PLAYER_MAX_BURNOUT)
-	if burnout >= GameConfig.PLAYER_MAX_BURNOUT:
+	burnout = clamp(burnout + amount, 0.0, PlayerStats.max_burnout)
+	burnout_changed.emit(burnout, PlayerStats.max_burnout)
+	if burnout >= PlayerStats.max_burnout:
 		player_died.emit()
 
 ## Пасивний скіл знімає вигорання
 func reduce_burnout(amount: float) -> void:
-	burnout = clamp(burnout - amount, 0.0, GameConfig.PLAYER_MAX_BURNOUT)
-	burnout_changed.emit(burnout, GameConfig.PLAYER_MAX_BURNOUT)
+	burnout = clamp(burnout - amount, 0.0, PlayerStats.max_burnout)
+	burnout_changed.emit(burnout, PlayerStats.max_burnout)
 
 ## Викликається скілом Dodge
 func start_dash() -> void:

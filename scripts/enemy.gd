@@ -19,6 +19,9 @@ var _damage_timer: float = 0.0
 # Зовнішній імпульс (для відштовхування від танку)
 var _ext_vel: Vector2 = Vector2.ZERO
 
+# Сповільнення від аури гравця (скидається щокадр)
+var _aura_slow_mult: float = 1.0
+
 # FAST — зиґзаґ
 var _zigzag_time: float = 0.0
 
@@ -45,8 +48,8 @@ func setup(type: int) -> void:
 	enemy_type = type
 	var cfg: Dictionary = GameConfig.ENEMY_CONFIG[type]
 
-	_health         = randf_range(cfg.hp_min,      cfg.hp_max)
-	_speed          = randf_range(cfg.speed_min,   cfg.speed_max)
+	_health         = randf_range(cfg.hp_min,      cfg.hp_max)    * PlayerStats.enemy_hp_mult
+	_speed          = randf_range(cfg.speed_min,   cfg.speed_max) * PlayerStats.enemy_speed_mult
 	_burnout_damage = randf_range(cfg.burnout_min, cfg.burnout_max)
 	_base_scale     = cfg.base_scale
 
@@ -87,6 +90,9 @@ func _physics_process(delta: float) -> void:
 	# Додаємо зовнішній імпульс (відштовхування) і затухаємо його
 	velocity += _ext_vel
 	_ext_vel = _ext_vel.move_toward(Vector2.ZERO, 400.0 * delta)
+	# Аура качечки сповільнює ворогів
+	velocity *= _aura_slow_mult
+	_aura_slow_mult = 1.0  # скидаємо для наступного кадру
 	move_and_slide()
 
 	# Дотикова шкода (тільки для NORMAL, FAST, TANK)
@@ -198,6 +204,7 @@ func take_damage(amount: float) -> void:
 	if _health <= 0.0:
 		get_tree().call_group("score_tracker", "add_score",
 				int(GameConfig.ENEMY_CONFIG[enemy_type].score_value))
+		PlayerStats.add_xp(GameConfig.XP_PER_ENEMY[enemy_type])
 		if enemy_type == TYPE_COFFEE:
 			_drop_health_pickup()
 		queue_free()
