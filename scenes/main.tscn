@@ -1,0 +1,137 @@
+[gd_scene format=3 uid="uid://chj85kyqnh4hc"]
+
+[ext_resource type="Script" uid="uid://bm15t5vleqryg" path="res://scripts/main.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="2"]
+[ext_resource type="Script" uid="uid://csl2hytajoa3o" path="res://scripts/spawner.gd" id="3"]
+[ext_resource type="PackedScene" path="res://scenes/ui/skill_slot.tscn" id="4"]
+
+[node name="Main" type="Node2D" unique_id=1532500203]
+script = ExtResource("1")
+
+[node name="Background" type="Polygon2D" parent="." unique_id=2046637669]
+color = Color(0.05, 0.05, 0.08, 1)
+polygon = PackedVector2Array(0, 0, 1024, 0, 1024, 768, 0, 768)
+
+[node name="ArenaFloor" type="Polygon2D" parent="." unique_id=892345671]
+color = Color(0.14, 0.14, 0.2, 1)
+
+[node name="Player" parent="." unique_id=1038591960 instance=ExtResource("2")]
+position = Vector2(576, 324)
+
+[node name="Spawner" type="Node2D" parent="." unique_id=1624082412]
+script = ExtResource("3")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1088444758]
+process_mode = 3
+
+[node name="BurnoutLabel" type="Label" parent="UI" unique_id=1871179037]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 330.0
+offset_bottom = 34.0
+text = "Вигорання: 0%"
+
+[node name="BurnoutBar" type="ProgressBar" parent="UI" unique_id=577324810]
+offset_left = 10.0
+offset_top = 38.0
+offset_right = 330.0
+offset_bottom = 65.0
+max_value = 1.0
+
+[node name="SkillBar" type="HBoxContainer" parent="UI" unique_id=444555666]
+offset_left = 362.0
+offset_top = 655.0
+offset_right = 662.0
+offset_bottom = 758.0
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="PassiveSlot" parent="UI/SkillBar" instance=ExtResource("4")]
+
+[node name="ActiveSlot1" parent="UI/SkillBar" instance=ExtResource("4")]
+
+[node name="ActiveSlot2" parent="UI/SkillBar" instance=ExtResource("4")]
+
+[node name="GameOverPanel" type="Panel" parent="UI" unique_id=689915924]
+visible = false
+offset_left = 326.0
+offset_top = 224.0
+offset_right = 826.0
+offset_bottom = 424.0
+
+[node name="GOTitle" type="Label" parent="UI/GameOverPanel" unique_id=373892176]
+layout_mode = 0
+offset_top = 30.0
+offset_right = 500.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 42
+text = "ВИ ВИГОРІЛИ!"
+horizontal_alignment = 1
+
+[node name="GOSubtitle" type="Label" parent="UI/GameOverPanel" unique_id=938305681]
+layout_mode = 0
+offset_top = 130.0
+offset_right = 500.0
+offset_bottom = 170.0
+text = "Натисніть Enter для рестарту"
+horizontal_alignment = 1
+
+[node name="StartPanel" type="Panel" parent="UI" unique_id=1122334455]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 30.0
+offset_right = -40.0
+offset_bottom = -30.0
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/StartPanel" unique_id=2233445566]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/StartPanel/MarginContainer" unique_id=3344556677]
+theme_override_constants/separation = 20
+
+[node name="PlaceholderImage" type="ColorRect" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=1233445566]
+custom_minimum_size = Vector2(0, 200)
+size_flags_horizontal = 3
+color = Color(0.18, 0.18, 0.28, 1)
+
+[node name="ImageLabel" type="Label" parent="UI/StartPanel/MarginContainer/VBoxContainer/PlaceholderImage" unique_id=1233445567]
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "[ Ілюстрація ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StoryLabel" type="Label" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=2344556677]
+custom_minimum_size = Vector2(200, 0)
+size_flags_horizontal = 3
+autowrap_mode = 3
+text = "Пт, 17:04. Ти вже подумки на дивані з піцою, коли у Slack падає повідомлення від тімліда: «Невелика фіча, нічого складного, треба до понеділка». Ти відкриваєш таск — і в тебе темніє в очах: тисяча рядків легасі без коментарів, три зламані тести й дедлайн «вже вчора». Повіки важчають... і ти прокидаєшся вже не в офісі. Навколо суцільний код і темрява, а з усіх боків повзуть баги — живі, злі й голодні. Єдиний вихід: вижити до ранку і не вигоріти."
+
+[node name="ControlsLabel" type="Label" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=778899001]
+size_flags_horizontal = 3
+text = "Керування:    WASD  або  ← ↑ ↓ →  —  рух        Стрільба  —  автоматична по найближчому ворогу"
+
+[node name="StartButton" type="Button" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=3455667788]
+custom_minimum_size = Vector2(0, 60)
+size_flags_horizontal = 3
+text = "▶   ПОЧАТИ ГРУ"
+theme_override_font_sizes/font_size = 22
+
+[node name="HSeparator" type="HSeparator" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=889900112]
+
+[node name="CreditsLabel" type="Label" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=990011223]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "Розробник: [Ваше ім'я]
+
+Асети:
+  • Godot Engine 4.6.1
+  • [Шрифт — заповни пізніше]
+  • [Звуки — заповни пізніше]
+  • [Графіка — заповни пізніше]"

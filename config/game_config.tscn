@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cpg52dvanbuna"]
+
+[ext_resource type="Script" uid="uid://bdk4ueh2htych" path="res://config/game_config.gd" id="1"]
+
+[node name="GameConfig" type="Node" unique_id=1716306765]
+script = ExtResource("1")
