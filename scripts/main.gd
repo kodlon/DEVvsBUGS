@@ -4,8 +4,11 @@ extends Node2D
 @onready var _burnout_label: Label = $UI/BurnoutLabel
 @onready var _burnout_bar: ProgressBar = $UI/BurnoutBar
 @onready var _game_over_panel: Panel = $UI/GameOverPanel
-@onready var _start_panel: Panel = $UI/StartPanel
-@onready var _start_button: Button = $UI/StartPanel/MarginContainer/VBoxContainer/StartButton
+@onready var _start_panel: Panel     = $UI/StartPanel
+@onready var _start_button: Button   = $UI/StartPanel/MarginContainer/VBoxContainer/StartButton
+@onready var _pause_button: Button   = $UI/TopBar/PauseButton
+@onready var _restart_button: Button = $UI/TopBar/RestartButton
+@onready var _go_restart: Button     = $UI/GameOverPanel/GOVBox/GORestartButton
 
 var _game_over := false
 
@@ -30,13 +33,26 @@ func _ready() -> void:
 	$UI/SkillBar/ActiveSlot1.setup(player.active_skill_1, "X")
 	$UI/SkillBar/ActiveSlot2.setup(player.active_skill_2, "C")
 
-	_start_panel.visible = true
 	_start_button.pressed.connect(_on_start_pressed)
+	_pause_button.pressed.connect(_on_pause_pressed)
+	_restart_button.pressed.connect(_on_restart)
+	_go_restart.pressed.connect(_on_restart)
+	_start_panel.visible = true
 	get_tree().paused = true
 
 func _on_start_pressed() -> void:
 	_start_panel.visible = false
 	get_tree().paused = false
+	_pause_button.visible = true
+	_restart_button.visible = true
+
+func _on_pause_pressed() -> void:
+	get_tree().paused = !get_tree().paused
+	_pause_button.text = "▶" if get_tree().paused else "⏸"
+
+func _on_restart() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 func _setup_arena() -> void:
 	var offset := GameConfig.get_arena_offset()
@@ -61,12 +77,7 @@ func _on_player_died() -> void:
 	if _game_over:
 		return
 	_game_over = true
-	# Ставимо ALWAYS перед паузою — інакше _unhandled_input не спрацює для рестарту
-	process_mode = Node.PROCESS_MODE_ALWAYS
 	get_tree().paused = true
 	_game_over_panel.visible = true
-
-func _unhandled_input(event: InputEvent) -> void:
-	if _game_over and event.is_action_pressed("ui_accept"):
-		get_tree().paused = false
-		get_tree().reload_current_scene()
+	_pause_button.visible = false
+	_restart_button.visible = false

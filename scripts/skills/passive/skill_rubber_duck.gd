@@ -7,6 +7,7 @@ func apply(player: Node) -> void:
 	_player       = player
 	skill_name    = RubberDuckConfig.SKILL_NAME
 	description   = RubberDuckConfig.DESCRIPTION
+	_timer        = RubberDuckConfig.INTERVAL  # щоб перший тік не спрацював одразу
 
 func _process(delta: float) -> void:
 	if _player == null:

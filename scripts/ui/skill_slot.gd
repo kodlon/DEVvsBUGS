@@ -4,14 +4,13 @@ extends Control
 @onready var _cd_overlay: ColorRect = $VBox/SlotPanel/CooldownOverlay
 @onready var _empty_label: Label    = $VBox/SlotPanel/EmptyLabel
 @onready var _key_label: Label      = $VBox/KeyLabel
+@onready var _slot_panel: Panel      = $VBox/SlotPanel
 @onready var _tooltip: Panel        = $Tooltip
-@onready var _tooltip_text: Label   = $Tooltip/Margin/TooltipText
+@onready var _tooltip_text: RichTextLabel = $Tooltip/Margin/TooltipText
 
 var _skill = null
 
 func _ready() -> void:
-	mouse_entered.connect(_on_mouse_entered)
-	mouse_exited.connect(_on_mouse_exited)
 	_tooltip.visible = false
 
 func setup(skill, key_hint: String) -> void:
@@ -23,7 +22,6 @@ func setup(skill, key_hint: String) -> void:
 		_tooltip_text.text = "Порожньо"
 		return
 
-	# Іконка
 	if skill.icon != null:
 		_icon.texture = skill.icon
 		_empty_label.visible = false
@@ -33,15 +31,15 @@ func setup(skill, key_hint: String) -> void:
 	_tooltip_text.text = "[b]%s[/b]\n\n%s" % [skill.skill_name, skill.description]
 
 func _process(_delta: float) -> void:
+	# Тултіп — перевіряємо позицію миші напряму (надійніше ніж сигнали)
+	var mouse := get_global_mouse_position()
+	var slot_rect := _slot_panel.get_global_rect()
+	_tooltip.visible = not get_tree().paused and slot_rect.has_point(mouse) and _skill != null
+
+	# Кулдаун оверлей
 	if _skill == null or not _skill.has_method("get_cooldown_pct"):
 		_cd_overlay.visible = false
 		return
 	var pct: float = _skill.get_cooldown_pct()
 	_cd_overlay.visible = pct > 0.0
 	_cd_overlay.color = Color(0.0, 0.0, 0.0, 0.75 * pct)
-
-func _on_mouse_entered() -> void:
-	_tooltip.visible = true
-
-func _on_mouse_exited() -> void:
-	_tooltip.visible = false
