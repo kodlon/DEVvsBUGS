@@ -39,6 +39,7 @@ const ENEMY_CONFIG := {
 		"burnout_min": 5.0, "burnout_max": 7.0,
 		"color": Color(0.85, 0.15, 0.15),
 		"base_scale": 1.0,
+		"score_value": 10,   # масовка, 3-4 постріли
 	},
 	1: {  # Hotfix — швидкий баг
 		"hp_min": 10.0, "hp_max": 15.0,
@@ -46,6 +47,7 @@ const ENEMY_CONFIG := {
 		"burnout_min": 2.0, "burnout_max": 4.0,
 		"color": Color(0.95, 0.45, 0.0),
 		"base_scale": 0.6,
+		"score_value": 15,   # складно влучити, але вмирає швидко
 	},
 	2: {  # Legacy Code — танк-баг
 		"hp_min": 120.0, "hp_max": 160.0,
@@ -53,6 +55,7 @@ const ENEMY_CONFIG := {
 		"burnout_min": 20.0, "burnout_max": 25.0,
 		"color": Color(0.15, 0.45, 0.1),
 		"base_scale": 1.9,
+		"score_value": 50,   # 12-16 пострілів + критична шкода
 	},
 	3: {  # Toxic Reviewer — жук-турелька
 		"hp_min": 40.0, "hp_max": 55.0,
@@ -67,6 +70,7 @@ const ENEMY_CONFIG := {
 		"acid_speed_max": 320.0,
 		"acid_damage_min": 10.0,
 		"acid_damage_max": 15.0,
+		"score_value": 30,   # небезпечний здалеку, 4-6 пострілів
 	},
 	4: {  # Coffee Scarab — жук-ящик
 		"hp_min": 60.0, "hp_max": 80.0,
@@ -78,6 +82,7 @@ const ENEMY_CONFIG := {
 		"wander_change_time": 2.0,
 		"heal_min": 30.0,
 		"heal_max": 40.0,
+		"score_value": 20,   # жертвуєш хілкою заради балів
 	},
 }
 

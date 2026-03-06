@@ -196,6 +196,8 @@ func apply_push(impulse: Vector2) -> void:
 func take_damage(amount: float) -> void:
 	_health -= amount
 	if _health <= 0.0:
+		get_tree().call_group("score_tracker", "add_score",
+				int(GameConfig.ENEMY_CONFIG[enemy_type].score_value))
 		if enemy_type == TYPE_COFFEE:
 			_drop_health_pickup()
 		queue_free()
