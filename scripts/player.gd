@@ -21,6 +21,12 @@ var _dash_timer := 0.0
 var _original_collision_mask: int
 var _original_color: Color
 
+# Walk Animation
+var _walk_tween: Tween
+var _step_side: int = 1
+var _is_animating_to_idle: bool = false
+var _step_duration: float = 0.25
+
 func _ready() -> void:
 	add_to_group("player")
 	_original_color = $Visual.color
@@ -74,6 +80,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		_handle_movement()
 		_handle_shooting(delta)
+		
+	var is_moving := velocity.length_squared() > 10.0
+	_update_walk_animation(is_moving)
 
 func _handle_movement() -> void:
 	var direction := Vector2.ZERO
@@ -195,6 +204,22 @@ func start_dash() -> void:
 	_is_dashing = true
 	_original_collision_mask = collision_mask
 	collision_mask = 0
+
+func _update_walk_animation(is_moving: bool) -> void:
+	if is_moving:
+		_is_animating_to_idle = false
+		if _walk_tween == null or not _walk_tween.is_valid():
+			_walk_tween = create_tween()
+			var angle_deg = randf_range(7.0, 10.0) * _step_side
+			_walk_tween.tween_property($Visual, "rotation_degrees", angle_deg, _step_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			_walk_tween.tween_callback(func(): _step_side *= -1)
+	else:
+		if not _is_animating_to_idle:
+			if _walk_tween and _walk_tween.is_valid():
+				_walk_tween.kill()
+			_walk_tween = create_tween()
+			_walk_tween.tween_property($Visual, "rotation_degrees", 0.0, _step_duration).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			_is_animating_to_idle = true
 
 func _draw() -> void:
 	if PlayerStats.aura_range > 0.0:
