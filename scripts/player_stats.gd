@@ -4,7 +4,7 @@ extends Node
 
 # ── Характеристики гравця ─────────────────────────────────────
 var base_damage: float      = 10.0
-var fire_rate_delay: float  = 0.5
+var fire_rate_delay: float  = 0.8
 var pierce_count: int       = 0
 var attack_range: float     = 300.0
 var move_speed: float       = 200.0
