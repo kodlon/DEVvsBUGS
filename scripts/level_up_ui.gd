@@ -371,8 +371,8 @@ func _player_text(stat: String, value: float) -> String:
 		"fire_rate_delay": return "-%d%% Затримка стрільби" % int(value * 100)
 		"move_speed":      return "+%d%% Швидкість руху" % int(value * 100)
 		"pierce_count":    return "+%d Пробиття снаряда" % int(value)
-		"aura_range":      return "+%d%% Радіус аури качечки" % int(value * 100)
-		"aura_dps":        return "+%d%% DPS аури качечки" % int(value * 100)
+		"aura_range":      return "+%d%% Радіус аури Stepico" % int(value * 100)
+		"aura_dps":        return "+%d%% DPS аури Stepico" % int(value * 100)
 		"attack_range":    return "+%d%% Радіус прицілювання" % int(value * 100)
 		"max_burnout":     return "+%d%% Макс. Вигорання" % int(value * 100)
 		"backend_blame_dps": 

@@ -18,7 +18,7 @@ func _process(delta: float) -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemies"):
-		body.take_damage(PlayerStats.base_damage)
+		body.take_damage(PlayerStats.base_damage, direction)
 		_hits_remaining -= 1
 		if _hits_remaining <= 0:
 			queue_free()

@@ -19,9 +19,11 @@ var _is_dashing := false
 var _dash_direction := Vector2.UP
 var _dash_timer := 0.0
 var _original_collision_mask: int
+var _original_color: Color
 
 func _ready() -> void:
 	add_to_group("player")
+	_original_color = $Visual.color
 	var offset := GameConfig.get_arena_offset()
 	var h := GameConfig.PLAYER_HALF_SIZE
 	_arena_min = offset + Vector2(h, h)
@@ -38,7 +40,8 @@ func _ready() -> void:
 func _on_backend_timer() -> void:
 	if PlayerStats.backend_blame_dps > 0.0:
 		for enemy in get_tree().get_nodes_in_group("enemies"):
-			enemy.take_damage(PlayerStats.backend_blame_dps)
+			var dir = (enemy.global_position - global_position).normalized()
+			enemy.take_damage(PlayerStats.backend_blame_dps, dir)
 
 func _setup_skills() -> void:
 	active_skill_1 = preload("res://scripts/skills/active/skill_dodge.gd").new()
@@ -134,6 +137,7 @@ func _auto_shoot() -> void:
 				var base_direction: Vector2 = (nearest.global_position - gun_pos).normalized()
 				var spread = deg_to_rad(spread_magnitude * randf_range(-1.0, 1.0))
 				bullet.direction = base_direction.rotated(spread)
+				get_tree().call_group("camera_shake", "shake_micro", bullet.direction)
 	else:
 		# Звичайна механіка - одна центральна гармата
 		var nearest: Node2D = null
@@ -154,6 +158,7 @@ func _auto_shoot() -> void:
 			var base_direction: Vector2 = (nearest.global_position - global_position).normalized()
 			var spread = deg_to_rad(spread_magnitude * randf_range(-1.0, 1.0))
 			bullet.direction = base_direction.rotated(spread)
+			get_tree().call_group("camera_shake", "shake_micro", bullet.direction)
 
 ## Ворог наносить вигорання — ігнорується під час доджу
 func take_burnout(amount: float) -> void:
@@ -162,6 +167,13 @@ func take_burnout(amount: float) -> void:
 	amount *= PlayerStats.enemy_damage_mult
 	burnout = clamp(burnout + amount, 0.0, PlayerStats.max_burnout)
 	burnout_changed.emit(burnout, PlayerStats.max_burnout)
+	get_tree().call_group("camera_shake", "shake_hard")
+	
+	# Hit Flash
+	var tween = create_tween()
+	$Visual.color = Color(1.0, 0.1, 0.1) # Reddish
+	tween.tween_property($Visual, "color", _original_color, 0.5).set_trans(Tween.TRANS_SINE)
+	
 	if burnout >= PlayerStats.max_burnout:
 		player_died.emit()
 

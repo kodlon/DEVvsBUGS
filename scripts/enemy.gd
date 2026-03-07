@@ -15,6 +15,7 @@ var _speed: float = 160.0
 var _burnout_damage: float = 6.0
 var _base_scale: float = 1.0
 var _damage_timer: float = 0.0
+var _damage_accumulator: float = 0.0
 
 # Зовнішній імпульс (для відштовхування від танку)
 var _ext_vel: Vector2 = Vector2.ZERO
@@ -42,6 +43,7 @@ var _wander_timer: float = 0.0
 var _flee_range: float = 200.0
 var _heal_amount: float = 35.0
 var _health_pickup_scene: PackedScene = preload("res://scenes/health_pickup.tscn")
+var _floating_text_scene: PackedScene = preload("res://scenes/ui/floating_text.tscn")
 
 ## Викликати одразу після instantiate(), до add_child()
 func setup(type: int) -> void:
@@ -53,8 +55,13 @@ func setup(type: int) -> void:
 	_burnout_damage = randf_range(cfg.burnout_min, cfg.burnout_max)
 	_base_scale     = cfg.base_scale
 
-	scale = Vector2.ONE * _base_scale
+	scale = Vector2.ZERO
 	$Visual.color = cfg.color
+
+	# Squash & Stretch spawn
+	var tween = create_tween()
+	tween.tween_property(self, "scale", Vector2(1.5, 0.5) * _base_scale, 0.15).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "scale", Vector2.ONE * _base_scale, 0.15).set_trans(Tween.TRANS_SPRING).set_ease(Tween.EASE_OUT)
 
 	match type:
 		TYPE_FAST:
@@ -199,9 +206,40 @@ func _get_random_arena_pos() -> Vector2:
 func apply_push(impulse: Vector2) -> void:
 	_ext_vel += impulse
 
-func take_damage(amount: float) -> void:
+func take_damage(amount: float, hit_dir: Vector2 = Vector2.ZERO, source: String = "") -> void:
 	_health -= amount
+	
+	# Hit Flash
+	var original_color = GameConfig.ENEMY_CONFIG[enemy_type].color
+	var tween = create_tween()
+	$Visual.color = Color.RED
+	tween.tween_interval(0.08)
+	tween.tween_property($Visual, "color", original_color, 0.0)
+	
+	# Knockback
+	if hit_dir != Vector2.ZERO:
+		apply_push(hit_dir * 100.0) # Knockback impulse
+		
+	# Floating Text
+	var display_amount = 0.0
+	var final_source = source
+	if amount >= 1.0:
+		display_amount = amount
+	else:
+		_damage_accumulator += amount
+		if _damage_accumulator >= 1.0:
+			display_amount = floor(_damage_accumulator)
+			_damage_accumulator -= display_amount
+			final_source = "aura" # Small damage is accumulated from aura
+	
+	if display_amount > 0 and _floating_text_scene:
+		var text_node = _floating_text_scene.instantiate() as FloatingText
+		text_node.global_position = global_position
+		get_parent().add_child(text_node)
+		text_node.setup(display_amount, _health <= 0.0, final_source)
+	
 	if _health <= 0.0:
+		get_tree().call_group("camera_shake", "shake_light")
 		get_tree().call_group("score_tracker", "add_score",
 				int(GameConfig.ENEMY_CONFIG[enemy_type].score_value))
 		PlayerStats.add_xp(GameConfig.XP_PER_ENEMY[enemy_type])

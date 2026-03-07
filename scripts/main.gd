@@ -63,6 +63,14 @@ func _ready() -> void:
 	_setup_wave_overlay()
 	_setup_xp_ui()
 
+func _process(delta: float) -> void:
+	if _burnout_bar.value > 0.8:
+		# Pulsate red
+		var s = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 150.0)
+		_burnout_bar.modulate = Color(1.0, s, s)
+	else:
+		_burnout_bar.modulate = Color.WHITE
+
 # ── Score UI ────────────────────────────────────────────────
 
 func _setup_score_ui() -> void:
@@ -125,7 +133,7 @@ func _on_wave_started(wave_name: String) -> void:
 	_wave_overlay_bg.visible = true
 
 	var tween := create_tween()
-	tween.tween_interval(0.7)
+	tween.tween_interval(1.5)
 	tween.tween_property(_wave_label,      "modulate:a", 0.0, 0.3)
 	tween.parallel().tween_property(_wave_overlay_bg, "modulate:a", 0.0, 0.3)
 	tween.tween_callback(func() -> void:
@@ -170,8 +178,18 @@ func _setup_arena() -> void:
 
 func _on_burnout_changed(current: float, maximum: float) -> void:
 	var pct := current / maximum
+	var is_damage = pct > _burnout_bar.value
+	
 	_burnout_bar.value = pct
 	_burnout_label.text = "Вигорання: %d%%" % int(pct * 100)
+	
+	if is_damage and !_game_over:
+		var tween = create_tween()
+		var init_x = 10.0 # From _burnout_bar.offset_left in UI
+		tween.tween_property(_burnout_bar, "position:x", init_x - 10.0, 0.05)
+		tween.tween_property(_burnout_bar, "position:x", init_x + 10.0, 0.05)
+		tween.tween_property(_burnout_bar, "position:x", init_x - 10.0, 0.05)
+		tween.tween_property(_burnout_bar, "position:x", init_x, 0.05)
 
 func _on_player_died() -> void:
 	if _game_over:
