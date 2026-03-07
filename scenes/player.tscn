@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://72kmh5tfnqvm" path="res://scripts/player.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://5pcrqv441d3e" path="res://sprites/Sprite-0002.png" id="2_g2els"]
+[ext_resource type="Texture2D" uid="uid://fug8alhfqu4o" path="res://sprites/shadow.png" id="2_qhqgy"]
 
 [sub_resource type="RectangleShape2D" id="Rect_1"]
 size = Vector2(25, 44)
@@ -13,6 +14,12 @@ script = ExtResource("1")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1687037461]
 position = Vector2(-0.5, -1)
 shape = SubResource("Rect_1")
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=313726740]
+texture_filter = 1
+position = Vector2(0.9999981, 24)
+scale = Vector2(2.1875, 2.1875)
+texture = ExtResource("2_qhqgy")
 
 [node name="Visual" type="Polygon2D" parent="." unique_id=1539509940]
 texture_filter = 1

@@ -65,9 +65,10 @@ func reset() -> void:
 
 func add_xp(amount: float) -> void:
 	current_xp += amount
-	var required_xp := BASE_MAX_XP * xp_requirement_mult
-	if current_xp >= required_xp:
+	var required_xp := (BASE_MAX_XP + current_level * 25.0) * xp_requirement_mult
+	while current_xp >= required_xp:
 		current_xp -= required_xp
 		current_level += 1
+		required_xp = (BASE_MAX_XP + current_level * 25.0) * xp_requirement_mult
 		level_up.emit()
 	xp_changed.emit(current_xp, required_xp)
