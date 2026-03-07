@@ -247,6 +247,7 @@ func _setup_xp_ui() -> void:
 	PlayerStats.level_up.connect(_on_level_up)
 
 func _on_xp_changed(current: float, maximum: float) -> void:
+	_xp_bar.max_value = maximum
 	_xp_bar.value = current
 	_xp_label.text = "Рівень %d  ·  XP: %d / %d" % [
 		PlayerStats.current_level, int(current), int(maximum)
