@@ -33,24 +33,34 @@ const RARITY_TITLES := {
 const PLAYER_STAT_NAMES: Array = [
 	"base_damage", "fire_rate_delay", "move_speed", "pierce_count",
 	"aura_range", "aura_dps", "attack_range", "max_burnout",
+	"backend_blame_dps", "has_second_monitor"
 ]
 const PLAYER_BUFF_VALUES := {
 	"base_damage":     {"junior": 0.10, "middle": 0.20, "senior": 0.40},
 	"fire_rate_delay": {"junior": 0.05, "middle": 0.10, "senior": 0.25},
 	"move_speed":      {"junior": 0.05, "middle": 0.10, "senior": 0.20},
-	"pierce_count":    {"junior": 0.0,  "middle": 1.0,  "senior": 2.0 },
+	"pierce_count":    {"junior": 1.0,  "middle": 2.0,  "senior": 3.0 },
 	"aura_range":      {"junior": 0.10, "middle": 0.20, "senior": 0.35},
 	"aura_dps":        {"junior": 0.10, "middle": 0.20, "senior": 0.35},
 	"attack_range":    {"junior": 0.10, "middle": 0.20, "senior": 0.30},
 	"max_burnout":     {"junior": 0.05, "middle": 0.10, "senior": 0.20},
+	"backend_blame_dps": {"junior": 1.0, "middle": 2.0, "senior": 3.0},
+	"has_second_monitor": {"junior": 1.0, "middle": 1.0, "senior": 1.0},
 }
 
 # ── Статистики ворогів ────────────────────────────────────────
-const ENEMY_STAT_NAMES: Array = ["enemy_hp_mult", "enemy_speed_mult", "spawn_delay_mult"]
+const ENEMY_STAT_NAMES: Array = [
+	"enemy_hp_mult", "enemy_speed_mult", "spawn_delay_mult",
+	"bullet_speed_mult", "enemy_damage_mult", "xp_requirement_mult", "weapon_spread"
+]
 const ENEMY_BUFF_VALUES := {
-	"enemy_hp_mult":    {"junior": 0.05, "middle": 0.10, "senior": 0.20},
-	"enemy_speed_mult": {"junior": 0.02, "middle": 0.05, "senior": 0.12},
-	"spawn_delay_mult": {"junior": 0.03, "middle": 0.07, "senior": 0.15},
+	"enemy_hp_mult":    {"junior": 0.0, "middle": 0.10, "senior": 0.20},
+	"enemy_speed_mult": {"junior": 0.0, "middle": 0.05, "senior": 0.12},
+	"spawn_delay_mult": {"junior": 0.0, "middle": 0.07, "senior": 0.15},
+	"bullet_speed_mult": {"junior": 0.0, "middle": 0.02, "senior": 0.05},
+	"enemy_damage_mult": {"junior": 0.0, "middle": 0.01, "senior": 0.03},
+	"xp_requirement_mult": {"junior": 0.0, "middle": 0.05, "senior": 0.10},
+	"weapon_spread": {"junior": 0.0, "middle": 1.0, "senior": 5.0}, # in degrees
 }
 
 var _overlay: ColorRect
@@ -197,7 +207,10 @@ func _build_card(data: Dictionary) -> Control:
 	plus_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	plus_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	plus_lbl.add_theme_font_size_override("font_size", 14)
-	plus_lbl.add_theme_color_override("font_color", Color(0.15, 1.0, 0.35))
+	if data.player_value <= 0.0:
+		plus_lbl.add_theme_color_override("font_color", Color(0.65, 0.65, 0.65))
+	else:
+		plus_lbl.add_theme_color_override("font_color", Color(0.15, 1.0, 0.35))
 	plus_lbl.add_theme_constant_override("outline_size", 2)
 	plus_lbl.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
 	vbox.add_child(plus_lbl)
@@ -210,7 +223,10 @@ func _build_card(data: Dictionary) -> Control:
 	minus_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	minus_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	minus_lbl.add_theme_font_size_override("font_size", 14)
-	minus_lbl.add_theme_color_override("font_color", Color(1.0, 0.25, 0.15))
+	if data.enemy_value <= 0.0:
+		minus_lbl.add_theme_color_override("font_color", Color(0.65, 0.65, 0.65))
+	else:
+		minus_lbl.add_theme_color_override("font_color", Color(1.0, 0.25, 0.15))
 	minus_lbl.add_theme_constant_override("outline_size", 2)
 	minus_lbl.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0))
 	vbox.add_child(minus_lbl)
@@ -278,12 +294,22 @@ func _apply_card(data: Dictionary) -> void:
 		"aura_dps":        PlayerStats.aura_dps        *= (1.0 + p_val)
 		"attack_range":    PlayerStats.attack_range    *= (1.0 + p_val)
 		"max_burnout":     PlayerStats.max_burnout     *= (1.0 + p_val)
+		"backend_blame_dps": 
+			if PlayerStats.backend_blame_dps == 0.0:
+				PlayerStats.backend_blame_dps = p_val
+			else:
+				PlayerStats.backend_blame_dps *= (1.0 + p_val / 10.0) # зростає потроху після першого взяття
+		"has_second_monitor": PlayerStats.has_second_monitor = true
 
 	var e_val: float = data.enemy_value
 	match data.enemy_stat:
 		"enemy_hp_mult":    PlayerStats.enemy_hp_mult    *= (1.0 + e_val)
 		"enemy_speed_mult": PlayerStats.enemy_speed_mult *= (1.0 + e_val)
 		"spawn_delay_mult": PlayerStats.spawn_delay_mult *= (1.0 - e_val)
+		"bullet_speed_mult": PlayerStats.bullet_speed_mult *= (1.0 - e_val)
+		"enemy_damage_mult": PlayerStats.enemy_damage_mult *= (1.0 + e_val)
+		"xp_requirement_mult": PlayerStats.xp_requirement_mult *= (1.0 + e_val)
+		"weapon_spread": PlayerStats.weapon_spread += e_val # additive
 
 # ── Генератор карток ──────────────────────────────────────────
 
@@ -291,12 +317,21 @@ func _generate_three_cards() -> Array:
 	var cards: Array = []
 	var available_stats: Array = PLAYER_STAT_NAMES.duplicate()
 
+	# Remove "has_second_monitor" if the player already has it
+	if PlayerStats.has_second_monitor:
+		available_stats.erase("has_second_monitor")
+	elif PlayerStats.current_level < 3:
+		# Не випадає на перших рівнях взагалі, щоб не "одразу"
+		available_stats.erase("has_second_monitor")
+
 	for _i in 3:
 		var rarity := _pick_rarity()
 
-		# Унікальний стат гравця
-		var idx_p: int = randi() % available_stats.size()
-		var p_stat: String = available_stats[idx_p]
+		var idx_p: int
+		var p_stat: String
+		
+		idx_p = randi() % available_stats.size()
+		p_stat = available_stats[idx_p]
 		available_stats.remove_at(idx_p)
 
 		# Рандомний стат ворогів
@@ -329,6 +364,8 @@ func _pick_title(rarity: String) -> String:
 	return t[randi() % t.size()]
 
 func _player_text(stat: String, value: float) -> String:
+	if value <= 0.0 and stat != "has_second_monitor" and stat != "backend_blame_dps":
+		return "Без бонусів"
 	match stat:
 		"base_damage":     return "+%d%% Шкода від пострілу" % int(value * 100)
 		"fire_rate_delay": return "-%d%% Затримка стрільби" % int(value * 100)
@@ -338,11 +375,23 @@ func _player_text(stat: String, value: float) -> String:
 		"aura_dps":        return "+%d%% DPS аури качечки" % int(value * 100)
 		"attack_range":    return "+%d%% Радіус прицілювання" % int(value * 100)
 		"max_burnout":     return "+%d%% Макс. Вигорання" % int(value * 100)
+		"backend_blame_dps": 
+			if PlayerStats.backend_blame_dps == 0.0:
+				return "Скіл: Спихнути на бекенд (%.1f DMG/s)" % value
+			else:
+				return "+%d%% Шкоди бекенда" % int(value * 10)
+		"has_second_monitor": return "Скіл: +1 Монітор (Подвійний постріл)"
 	return "+??"
 
 func _enemy_text(stat: String, value: float) -> String:
+	if value <= 0.0:
+		return "Без штрафів"
 	match stat:
 		"enemy_hp_mult":    return "Але баги товстіші на +%d%%!" % int(value * 100)
 		"enemy_speed_mult": return "Але баги швидші на +%d%%!" % int(value * 100)
 		"spawn_delay_mult": return "Але баги лізуть на %d%% частіше!" % int(value * 100)
+		"bullet_speed_mult": return "Але фікси летять повільніше на %d%%!" % int(value * 100)
+		"enemy_damage_mult": return "Але П'ятничний деплой (Шкода +%d%%)!" % int(value * 100)
+		"xp_requirement_mult": return "Але Мікроменеджмент (XP на левел +%d%%)!" % int(value * 100)
+		"weapon_spread": return "Але Спагетті код (Розкид зброї +%d°)!" % int(value)
 	return "Але щось стає гіршим!"

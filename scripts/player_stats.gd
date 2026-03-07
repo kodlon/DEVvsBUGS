@@ -9,6 +9,10 @@ var pierce_count: int       = 0
 var attack_range: float     = 300.0
 var move_speed: float       = 200.0
 var max_burnout: float      = 100.0
+var has_second_monitor: bool = false
+var backend_blame_dps: float = 0.0
+var bullet_speed_mult: float = 1.0
+var weapon_spread: float    = 0.0
 
 # ── Аура Гумової Качечки ──────────────────────────────────────
 var aura_range: float     = 120.0
@@ -19,9 +23,11 @@ var aura_dps: float       = 5.0
 var enemy_hp_mult: float    = 1.0
 var enemy_speed_mult: float = 1.0
 var spawn_delay_mult: float = 1.0
+var enemy_damage_mult: float= 1.0
+var xp_requirement_mult: float = 1.0
 
 # ── Система досвіду ───────────────────────────────────────────
-const MAX_XP: float = 100.0
+var BASE_MAX_XP: float = 100.0
 var current_xp: float = 0.0
 var current_level: int = 0
 
@@ -39,6 +45,10 @@ func reset() -> void:
 	attack_range    = GameConfig.PLAYER_SHOOT_RADIUS
 	move_speed      = GameConfig.PLAYER_SPEED
 	max_burnout     = GameConfig.PLAYER_MAX_BURNOUT
+	has_second_monitor = false
+	backend_blame_dps = 0.0
+	bullet_speed_mult = 1.0
+	weapon_spread   = 0.0
 
 	aura_range    = RubberDuckConfig.AURA_RANGE
 	aura_slowdown = RubberDuckConfig.AURA_SLOWDOWN
@@ -47,14 +57,17 @@ func reset() -> void:
 	enemy_hp_mult    = 1.0
 	enemy_speed_mult = 1.0
 	spawn_delay_mult = 1.0
+	enemy_damage_mult= 1.0
+	xp_requirement_mult = 1.0
 
 	current_xp    = 0.0
 	current_level = 0
 
 func add_xp(amount: float) -> void:
 	current_xp += amount
-	if current_xp >= MAX_XP:
-		current_xp -= MAX_XP
+	var required_xp := BASE_MAX_XP * xp_requirement_mult
+	if current_xp >= required_xp:
+		current_xp -= required_xp
 		current_level += 1
 		level_up.emit()
-	xp_changed.emit(current_xp, MAX_XP)
+	xp_changed.emit(current_xp, required_xp)

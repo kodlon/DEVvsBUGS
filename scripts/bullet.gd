@@ -14,7 +14,7 @@ func _ready() -> void:
 	timer.start()
 
 func _process(delta: float) -> void:
-	position += direction * GameConfig.BULLET_SPEED * delta
+	position += direction * GameConfig.BULLET_SPEED * PlayerStats.bullet_speed_mult * delta
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("enemies"):

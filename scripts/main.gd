@@ -195,7 +195,7 @@ func _setup_xp_ui() -> void:
 	_xp_bar.offset_top    = -26.0
 	_xp_bar.offset_bottom =  0.0
 	_xp_bar.min_value     = 0.0
-	_xp_bar.max_value     = PlayerStats.MAX_XP
+	_xp_bar.max_value     = PlayerStats.BASE_MAX_XP * PlayerStats.xp_requirement_mult
 	_xp_bar.value         = 0.0
 	_xp_bar.show_percentage = false
 
