@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://daktfqdksoqpt" path="res://sprites/background_blue.png" id="3_tefeu"]
 [ext_resource type="PackedScene" path="res://scenes/ui/skill_slot.tscn" id="4"]
 [ext_resource type="Script" uid="uid://cax2qbx1wgx0d" path="res://scripts/camera_shake.gd" id="5"]
+[ext_resource type="Shader" uid="uid://b4v327b8k2e4w" path="res://shaders/crt.gdshader" id="Shader_crt"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_o6xl0"]
 texture = ExtResource("3_tefeu")
@@ -76,6 +77,12 @@ texture = ExtResource("3_tefeu")
 
 [sub_resource type="TileSet" id="TileSet_tipki"]
 sources/0 = SubResource("TileSetAtlasSource_o6xl0")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_crt"]
+shader = ExtResource("Shader_crt")
+shader_parameter/scan_line_count = 0.0
+shader_parameter/curvature_x = 0.1170000055575
+shader_parameter/curvature_y = 0.1010000047975
 
 [node name="Main" type="Node2D" unique_id=1532500203]
 script = ExtResource("1")
@@ -262,3 +269,15 @@ text = "Розробник: [Ваше ім'я]
   • [Шрифт — заповни пізніше]
   • [Звуки — заповни пізніше]
   • [Графіка — заповни пізніше]"
+
+[node name="CRTLayer" type="CanvasLayer" parent="." unique_id=96641967]
+layer = 100
+
+[node name="ColorRect" type="ColorRect" parent="CRTLayer" unique_id=1247591350]
+material = SubResource("ShaderMaterial_crt")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
