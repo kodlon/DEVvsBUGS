@@ -33,6 +33,7 @@ func _announce_wave(wave_index: int) -> void:
 	_announce_timer = 1.0
 	_game_active = false
 	wave_started.emit(GameConfig.WAVE_CONFIG[wave_index].name)
+	AudioManager.play_next_wave_begin()
 
 func _process(delta: float) -> void:
 	if _is_announcing:

@@ -21,6 +21,7 @@ GameConfig="*res://config/game_config.gd"
 DodgeConfig="*res://config/skills/dodge_config.gd"
 RubberDuckConfig="*res://config/skills/rubber_duck_config.gd"
 PlayerStats="*res://scripts/player_stats.gd"
+AudioManager="*res://scripts/audio_manager.gd"
 
 [display]
 

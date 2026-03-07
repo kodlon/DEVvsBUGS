@@ -208,6 +208,7 @@ func apply_push(impulse: Vector2) -> void:
 
 func take_damage(amount: float, hit_dir: Vector2 = Vector2.ZERO, source: String = "") -> void:
 	_health -= amount
+	AudioManager.play_enemy_hit()
 	
 	# Hit Flash
 	var original_color = GameConfig.ENEMY_CONFIG[enemy_type].color

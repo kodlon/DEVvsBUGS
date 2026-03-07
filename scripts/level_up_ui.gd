@@ -79,6 +79,7 @@ func setup() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+	AudioManager.play_level_up()
 	_create_overlay()
 	_create_title()
 	_create_cards()

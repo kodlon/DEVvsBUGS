@@ -138,6 +138,7 @@ func _auto_shoot() -> void:
 				var spread = deg_to_rad(spread_magnitude * randf_range(-1.0, 1.0))
 				bullet.direction = base_direction.rotated(spread)
 				get_tree().call_group("camera_shake", "shake_micro", bullet.direction)
+				AudioManager.play_shoot()
 	else:
 		# Звичайна механіка - одна центральна гармата
 		var nearest: Node2D = null
@@ -159,6 +160,7 @@ func _auto_shoot() -> void:
 			var spread = deg_to_rad(spread_magnitude * randf_range(-1.0, 1.0))
 			bullet.direction = base_direction.rotated(spread)
 			get_tree().call_group("camera_shake", "shake_micro", bullet.direction)
+			AudioManager.play_shoot()
 
 ## Ворог наносить вигорання — ігнорується під час доджу
 func take_burnout(amount: float) -> void:
@@ -168,6 +170,7 @@ func take_burnout(amount: float) -> void:
 	burnout = clamp(burnout + amount, 0.0, PlayerStats.max_burnout)
 	burnout_changed.emit(burnout, PlayerStats.max_burnout)
 	get_tree().call_group("camera_shake", "shake_hard")
+	AudioManager.play_received_damage()
 	
 	# Hit Flash
 	var tween = create_tween()
