@@ -62,7 +62,7 @@ func setup(type: int) -> void:
 	_base_scale     = cfg.base_scale
 
 	scale = Vector2.ZERO
-	$Visual.color = cfg.color
+	$Visual.modulate = Color.WHITE
 
 	match type:
 		TYPE_NORMAL:
@@ -232,11 +232,10 @@ func take_damage(amount: float, hit_dir: Vector2 = Vector2.ZERO, source: String 
 	AudioManager.play_enemy_hit()
 	
 	# Hit Flash
-	var original_color = GameConfig.ENEMY_CONFIG[enemy_type].color
 	var tween = create_tween()
-	$Visual.color = Color.RED
+	$Visual.modulate = Color.RED
 	tween.tween_interval(0.08)
-	tween.tween_property($Visual, "color", original_color, 0.0)
+	tween.tween_property($Visual, "modulate", Color.WHITE, 0.0)
 	
 	# Knockback
 	if hit_dir != Vector2.ZERO:

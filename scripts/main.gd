@@ -47,7 +47,6 @@ func _ready() -> void:
 	# Skill slots UI
 	$UI/SkillBar/PassiveSlot.setup(player.passive_skill, "Пасивний")
 	$UI/SkillBar/ActiveSlot1.setup(player.active_skill_1, "X")
-	$UI/SkillBar/ActiveSlot2.setup(player.active_skill_2, "C")
 
 	_start_button.pressed.connect(_on_start_pressed)
 	_pause_button.pressed.connect(_on_pause_pressed)

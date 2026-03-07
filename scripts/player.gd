@@ -64,11 +64,12 @@ func _setup_skills() -> void:
 	passive_skill.apply(self)
 
 func _input(event: InputEvent) -> void:
+	if Input.is_action_just_pressed("skill_dodge"):
+		if active_skill_1:
+			active_skill_1.activate(self)
+	
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
-			KEY_X:
-				if active_skill_1:
-					active_skill_1.activate(self)
 			KEY_C:
 				if active_skill_2:
 					active_skill_2.activate(self)

@@ -4,7 +4,13 @@ signal wave_started(wave_name: String)
 
 const MARGIN := 50.0
 
-var _enemy_scene: PackedScene = preload("res://scenes/enemy.tscn")
+var _enemy_scenes: Array[PackedScene] = [
+	preload("res://scenes/enemy_default.tscn"), # TYPE_NORMAL
+	preload("res://scenes/enemy_fast.tscn"),    # TYPE_FAST
+	preload("res://scenes/enemy_tank.tscn"),    # TYPE_TANK
+	preload("res://scenes/enemy_turret.tscn"),  # TYPE_TURRET
+	preload("res://scenes/enemy_heal.tscn")     # TYPE_COFFEE
+]
 var _offset: Vector2
 
 # Стан хвиль
@@ -91,7 +97,7 @@ func _start_wave() -> void:
 
 func _spawn_enemy() -> void:
 	var type: int = _pick_enemy_type()
-	var enemy: Enemy = _enemy_scene.instantiate() as Enemy
+	var enemy: Enemy = _enemy_scenes[type].instantiate() as Enemy
 
 	# Налаштовуємо до add_child, щоб не було flash дефолтного вигляду
 	enemy.setup(type)
