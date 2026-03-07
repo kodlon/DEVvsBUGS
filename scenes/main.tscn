@@ -175,7 +175,7 @@ custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "↺   Спробувати ще раз"
+text = "Рестарт"
 
 [node name="TopBar" type="HBoxContainer" parent="UI" unique_id=1809904919]
 anchors_preset = 10
@@ -191,14 +191,14 @@ visible = false
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "⏸"
+text = "Пауза"
 
 [node name="RestartButton" type="Button" parent="UI/TopBar" unique_id=1593073311]
 visible = false
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "↺"
+text = "Рестарт"
 
 [node name="StartPanel" type="Panel" parent="UI" unique_id=1122334455]
 anchors_preset = 15
@@ -232,7 +232,7 @@ color = Color(0.18, 0.18, 0.28, 1)
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-text = "[ Ілюстрація ]"
+text = "Тут може бути ваша реклама."
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -240,20 +240,20 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Пт, 17:04. Ти вже подумки на дивані з піцою, коли у Slack падає повідомлення від тімліда: «Невелика фіча, нічого складного, треба до понеділка». Ти відкриваєш таск — і в тебе темніє в очах: тисяча рядків легасі без коментарів, три зламані тести й дедлайн «вже вчора». Повіки важчають... і ти прокидаєшся вже не в офісі. Навколо суцільний код і темрява, а з усіх боків повзуть баги — живі, злі й голодні. Єдиний вихід: вижити до ранку і не вигоріти."
+text = "Пт, 17:04. Ти вже подумки на дивані граєш Software Inc., коли у Mattermost падає повідомлення від тімліда: «Невелика фіча, нічого складного, треба до понеділка». Ти відкриваєш таск — і в тебе темніє в очах: тисяча рядків легасі без коментарів, три зламані тести й дедлайн «вже вчора». Повіки важчають... і ти прокидаєшся вже не в офісі. Навколо суцільний код і темрява, а з усіх боків повзуть баги — живі, злі й голодні. Єдиний вихід: вижити до ранку і не вигоріти."
 autowrap_mode = 3
 
 [node name="ControlsLabel" type="Label" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=778899001]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Керування:    WASD  або  ← ↑ ↓ →  —  рух        Стрільба  —  автоматична по найближчому ворогу"
+text = "Керування:    WASD  або  стрілочки  —  рух        Стрільба  —  автоматична по найближчому ворогу"
 
 [node name="StartButton" type="Button" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=-839299508]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 22
-text = "▶   ПОЧАТИ ГРУ"
+text = "ПОЧАТИ ГРУ"
 
 [node name="HSeparator" type="HSeparator" parent="UI/StartPanel/MarginContainer/VBoxContainer" unique_id=889900112]
 layout_mode = 2
@@ -262,13 +262,12 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 13
-text = "Розробник: [Ваше ім'я]
+text = "Розробник: kodlon
 
 Асети:
   • Godot Engine 4.6.1
-  • [Шрифт — заповни пізніше]
-  • [Звуки — заповни пізніше]
-  • [Графіка — заповни пізніше]"
+  • Ui and Sound - Kenney
+  • Background Music -  nene"
 
 [node name="CRTLayer" type="CanvasLayer" parent="." unique_id=96641967]
 layer = 100

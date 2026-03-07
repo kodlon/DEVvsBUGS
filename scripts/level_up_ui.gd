@@ -10,9 +10,9 @@ const RARITY_COLORS := {
 	"senior": Color(0.60, 0.10, 0.90),
 }
 const RARITY_LABELS := {
-	"junior": "★  JUNIOR",
-	"middle": "★★  MIDDLE",
-	"senior": "★★★  SENIOR",
+	"junior": "*  JUNIOR",
+	"middle": "**  MIDDLE",
+	"senior": "***  SENIOR",
 }
 const RARITY_TITLES := {
 	"junior": [

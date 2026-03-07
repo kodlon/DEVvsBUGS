@@ -151,7 +151,7 @@ func _on_start_pressed() -> void:
 
 func _on_pause_pressed() -> void:
 	get_tree().paused = !get_tree().paused
-	_pause_button.text = "▶" if get_tree().paused else "⏸"
+	_pause_button.text = "Продовжити" if get_tree().paused else "Пауза"
 
 func _on_restart() -> void:
 	get_tree().paused = false

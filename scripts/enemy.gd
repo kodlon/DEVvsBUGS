@@ -122,6 +122,11 @@ func _physics_process(delta: float) -> void:
 	
 	var is_moving := velocity.length_squared() > 10.0
 	_update_walk_animation(is_moving)
+	
+	if _player.global_position.x < global_position.x:
+		$Visual.flip_h = true
+	else:
+		$Visual.flip_h = false
 
 	# Дотикова шкода (тільки для NORMAL, FAST, TANK)
 	if enemy_type != TYPE_TURRET and enemy_type != TYPE_COFFEE:
